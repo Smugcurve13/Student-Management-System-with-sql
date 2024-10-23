@@ -14,13 +14,21 @@ class MainWindow(QMainWindow):
 
         file_menu_item = self.menuBar().addMenu('&File')
         help_menu_item = self.menuBar().addMenu('&Help')
+        edit_menu_item = self.menuBar().addMenu('&Edit')
 
+        # File --> Add Student Action 
         add_student_action = QAction("Add Student",self)
         add_student_action.triggered.connect(self.insert)
         file_menu_item.addAction(add_student_action)
 
+        # Help --> About Action 
         about_action = QAction('About',self)
         help_menu_item.addAction(about_action)
+
+        # Edit --> Search Action 
+        search_action = QAction('Search',self)
+        search_action.triggered.connect(self.search)
+        edit_menu_item.addAction(search_action)
 
         self.table = QTableWidget()
         self.table.setColumnCount(4)
@@ -41,6 +49,36 @@ class MainWindow(QMainWindow):
     def insert(self):
         dialog = InsertDialog()
         dialog.exec()    
+    
+    def search(self):
+        dialog = SearchDialog()
+        dialog.exec()
+
+
+class SearchDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Search Student")
+        self.setFixedWidth(300)
+        self.setFixedHeight(300)
+
+        layout = QVBoxLayout()
+
+        # Add Name Field
+        self.name = QLineEdit()
+        self.name.setPlaceholderText("Name")
+        layout.addWidget(self.name)
+
+        # Add Search Button
+        button = QPushButton("Search")
+        button.clicked.connect(self.search_student)
+        layout.addWidget(button)
+
+        self.setLayout(layout)
+    
+    def search_student(self):
+        name = self.name.text()
+
 
 
 class InsertDialog(QDialog):
