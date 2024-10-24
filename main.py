@@ -7,6 +7,14 @@ import sys
 
 # Finished
 
+class DatabaseConnection:
+    def __init__(self,database_file="database.db"):
+        self.database_file = database_file
+
+    def connect(self):
+        connection = sql.connect(self.database_file)
+        return connection
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -69,7 +77,7 @@ class MainWindow(QMainWindow):
         self.statusbar.addWidget(delete_button)
 
     def load_data(self):
-        connection = sql.connect('database.db')
+        connection = DatabaseConnection().connect()
         result = connection.execute("Select * from students")
         self.table.setRowCount(0)
         for row_num , row_data in enumerate(result):
@@ -149,7 +157,7 @@ class EditDialog(QDialog):
         self.setLayout(layout)
 
     def update_student(self):
-        connection = sql.connect('database.db')
+        connection = DatabaseConnection().connect()
         cursor = connection.cursor()
         cursor.execute("update students set name = ?, course = ?, mobile = ? where id = ?",
                       (self.student_name.text(), 
@@ -226,7 +234,7 @@ class SearchDialog(QDialog):
     
     def search_student(self):
         name = self.name.text()
-        connection = sql.connect('database.db')
+        connection = DatabaseConnection().connect()
         cursor = connection.cursor()
         result = cursor.execute("select * from students where name = ?",
                        (name,))
@@ -277,7 +285,7 @@ class InsertDialog(QDialog):
         name   = self.student_name.text()
         course = self.student_course.itemText(self.student_course.currentIndex())
         mobile = self.student_mobile.text()
-        connection = sql.connect('database.db')
+        connection = DatabaseConnection().connect()
         cursor = connection.cursor()
         cursor.execute("insert into students (name, course, mobile) values (?,?,?)",
                        (name,course,mobile))
@@ -285,6 +293,8 @@ class InsertDialog(QDialog):
         cursor.close()
         connection.close()
         main_window.load_data()
+
+        self.close()
 
 
 app = QApplication(sys.argv)
