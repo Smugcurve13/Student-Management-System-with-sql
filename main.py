@@ -25,6 +25,7 @@ class MainWindow(QMainWindow):
         # Help --> About Action 
         about_action = QAction('About',self)
         help_menu_item.addAction(about_action)
+        about_action.triggered.connect(self.about)
 
         # Edit --> Search Action 
         search_action = QAction(QIcon("icons/search.png"),'Search',self)
@@ -92,6 +93,17 @@ class MainWindow(QMainWindow):
         dialog = DeleteDialog()
         dialog.exec()
 
+    def about(self):
+        dialog = AboutDialog()
+        dialog.exec()
+
+class AboutDialog(QMessageBox):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("About")
+        content = """
+This App is created for my Learning. For changes please clone the git repo"""
+        self.setText(content)
 
 class EditDialog(QDialog):
     def __init__(self):
