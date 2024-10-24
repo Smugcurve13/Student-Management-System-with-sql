@@ -96,6 +96,59 @@ class MainWindow(QMainWindow):
 class EditDialog(QDialog):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("Update Student Data")
+        self.setFixedWidth(300)
+        self.setFixedHeight(300)
+
+        layout = QVBoxLayout()
+
+        # Get Student Name from Selected Row
+        index = main_window.table.currentRow()
+        student_name = main_window.table.item(index, 1).text()
+
+        # Get ID from selected row
+        self.student_id = main_window.table.item(index,0).text()
+
+        # Add Student Name
+        self.student_name = QLineEdit(student_name)
+        self.student_name.setPlaceholderText("Name")
+        layout.addWidget(self.student_name)
+
+        # Add combo box of courses
+        course_name = main_window.table.item(index,2).text()
+        self.student_course = QComboBox()
+        courses = ['Biology','Math','Astronomy','Physics']
+        self.student_course.addItems(courses)
+        self.student_course.setCurrentText(course_name)
+        layout.addWidget(self.student_course)
+
+        # Add mobile
+        mobile = main_window.table.item(index,3).text()
+        self.student_mobile = QLineEdit(mobile)
+        self.student_mobile.setPlaceholderText("Mobile")
+        layout.addWidget(self.student_mobile)
+
+        # Add Submit
+        submit_button = QPushButton("Update")
+        submit_button.clicked.connect(self.update_student)
+        layout.addWidget(submit_button)
+        
+        self.setLayout(layout)
+
+    def update_student(self):
+        connection = sql.connect('database.db')
+        cursor = connection.cursor()
+        cursor.execute("update students set name = ?, course = ?, mobile = ? where id = ?",
+                      (self.student_name.text(), 
+                       self.student_course.itemText(self.student_course.currentIndex()),
+                       self.student_mobile.text(),
+                       self.student_id))
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+        # Refresh the table
+        main_window.load_data()
 
 
 class DeleteDialog():
