@@ -1,3 +1,4 @@
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout ,QWidget, QGridLayout, QLineEdit,\
      QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, QComboBox
 from PyQt6.QtGui import QAction
@@ -78,7 +79,19 @@ class SearchDialog(QDialog):
     
     def search_student(self):
         name = self.name.text()
+        connection = sql.connect('database.db')
+        cursor = connection.cursor()
+        result = cursor.execute("select * from students where name = ?",
+                       (name,))
+        rows = list(result)
+        print(rows)
+        items = main_window.table.findItems(name,Qt.MatchFlag.MatchFixedString)
+        for item in items:
+            print(item)
+            main_window.table.item(item.row(),1).setSelected(True)
 
+        cursor.close()
+        connection.close()
 
 
 class InsertDialog(QDialog):
