@@ -5,6 +5,7 @@ from PyQt6.QtGui import QAction, QIcon
 import sqlite3 as sql
 import sys
 
+# Finished
 
 class MainWindow(QMainWindow):
     def __init__(self):
